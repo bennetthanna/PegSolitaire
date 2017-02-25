@@ -114,7 +114,7 @@ void setStatusBasedOnLocation(PegSolitaireBoard *board, int location, int status
     }
 }
 
-void setNumPegs(PegSolitaireBoard *board) {
+int setNumPegs(PegSolitaireBoard *board) {
     board->numPegs = 0;
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 5; ++j) {
@@ -123,6 +123,7 @@ void setNumPegs(PegSolitaireBoard *board) {
             }
         }
     }
+    return board->numPegs;
 }
 
 void initializeStatusBoard(PegSolitaireBoard *board) {
@@ -414,11 +415,26 @@ void updateBoard(PegSolitaireBoard *board) {
             if (board->locationOfEmptyPegs[j] == jumpedPeg) {
                 printf("Erasing multimapOfValidMoves because of jumpedPeg[%i]: %d, %d\n", jumpedPeg, it2->first, it2->second);
                 board->multimapOfValidMoves.erase(it2);
-                it2 = board->multimapOfValidMoves.begin();
+                if (board->multimapOfValidMoves.size() != 0) {
+                    it2 = board->multimapOfValidMoves.begin();
+                } else {
+                    printf("No more valid moves\n");
+                    //here I should call DFS function or some function to popoff vector board state and try new move
+                    //if previous board's mapofValidMoves.size > 1 then that means there was more than one option
+                    //and you should now try option #2
+                    //or somehow keep track of which options you have tried and which ones you havent
+                    exit(1);
+                }
             } else if (board->locationOfEmptyPegs[j] == it2->second) {
                 printf("Erasing multimapOfValidMoves: %d, %d\n", it2->first, it2->second);
                 board->multimapOfValidMoves.erase(it2);
-                it2 = board->multimapOfValidMoves.begin();
+                if (board->multimapOfValidMoves.size() != 0) {
+                    it2 = board->multimapOfValidMoves.begin();
+                } else {
+                    printf("No more valid moves\n");
+                    //here I should call DFS function or some function to popoff vector board state and try new move
+                    exit(1);
+                }
             }
         }
     }
@@ -506,8 +522,7 @@ int main(int argc, char**argv) {
         movePegToFirstOption(board);
         printStatusBoard(board);
 
-        //SEGFAULTS HERE
-        // updateBoard(board);
+        updateBoard(board);
         // movePegToFirstOption(board);
         // printStatusBoard(board);
     }
