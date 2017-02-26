@@ -10,9 +10,6 @@ struct PegSolitaireBoard {
     int numPegs;
     std::multimap<int, int>multimapOfValidMoves;
     std::vector<int>locationOfEmptyPegs;
-    //vector of pegs on the board?
-    //when peg is removed from board iterate through vector, find the element and erase?
-    //struct hold vector of empty pegs and valid moves?
 };
 
 int convertFromIndexToLocation(int i, int j) { 
@@ -127,7 +124,6 @@ int setNumPegs(PegSolitaireBoard *board) {
 }
 
 void initializeStatusBoard(PegSolitaireBoard *board) {
-    //initialize all to -1
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 5; ++j) {
             board->statusBoard[i][j] = -1;
@@ -135,7 +131,6 @@ void initializeStatusBoard(PegSolitaireBoard *board) {
     }
 
     int num = 5;
-    //set 15 peg triangle to 1's
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < num; ++j) {
             board->statusBoard[i][j] = 1;
@@ -193,16 +188,68 @@ void setStatusBoard (PegSolitaireBoard *board, int location) {
     }
 }
 
-void printStatusBoard(PegSolitaireBoard *board) {
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            if (board->statusBoard[i][j] != -1) {
-                printf("%i  ", board->statusBoard[i][j]);
-            }
-        }
-        
-        printf("\n");
+void setNewBoardStatusEmptyPegs (PegSolitaireBoard *board, int location) {
+    if (location == 1) {
+        board->statusBoard[0][0] = 0;
     }
+    if (location == 3) {
+        board->statusBoard[0][1] = 0;
+    }
+    if (location == 6) {
+        board->statusBoard[0][2] = 0;
+    }
+    if (location == 10) {
+        board->statusBoard[0][3] = 0;
+    }
+    if (location == 15) {
+        board->statusBoard[0][4] = 0;
+    }
+    if (location == 2) {
+        board->statusBoard[1][0] = 0;
+    }
+    if (location == 5) {
+        board->statusBoard[1][1] = 0;
+    }
+    if (location == 9) {
+        board->statusBoard[1][2] = 0;
+    }
+    if (location == 14) {
+        board->statusBoard[1][3] = 0;
+    }
+    if (location == 4) {
+        board->statusBoard[2][0] = 0;
+    }
+    if (location == 8) {
+        board->statusBoard[2][1] = 0;
+    }
+    if (location == 13) {
+        board->statusBoard[2][2] = 0;
+    }
+    if (location == 7) {
+        board->statusBoard[3][0] = 0;        
+    }
+    if (location == 12) {
+        board->statusBoard[3][1] = 0;
+    }
+    if (location == 11) {
+        board->statusBoard[4][0] = 0;
+    }
+}
+
+void printStatusBoard(PegSolitaireBoard *board) {
+    printf("        %i      \n", board->statusBoard[0][0]);
+    printf("      %i   %i    \n", board->statusBoard[1][0], board->statusBoard[0][1]);
+    printf("    %i   %i   %i   \n", board->statusBoard[2][0], board->statusBoard[1][1], board->statusBoard[0][2]);
+    printf("  %i   %i   %i   %i \n", board->statusBoard[3][0], board->statusBoard[2][1], board->statusBoard[1][2], board->statusBoard[0][3]);
+    printf("%i   %i   %i   %i   %i\n", board->statusBoard[4][0], board->statusBoard[3][1], board->statusBoard[2][2], board->statusBoard[1][3], board->statusBoard[0][4]);
+}
+
+void printLocationBoard() {
+    printf("        1         \n");
+    printf("      2   3       \n");
+    printf("    4   5   6     \n");
+    printf("  7   8   9   10  \n");
+    printf("11  12  13  14  15\n");
 }
 
 int getIndexStatus(PegSolitaireBoard *board, int i, int j) {
@@ -210,9 +257,6 @@ int getIndexStatus(PegSolitaireBoard *board, int i, int j) {
 }
 
 std::map<int, std::vector<int> > getMapOfValidMoves() {
-    //inside here add line where it checks to see if each ones status is 0
-    //example: if getStatus(4) == 0 then don't push back onto empty vector
-    //because it is empty and thus doesn't hold a peg and thus isn't a valid move to move to the empty hole
     std::vector<int>empty1;
     empty1.push_back(4);
     empty1.push_back(6);
@@ -296,8 +340,6 @@ std::vector<int> findEmptyPegLocations(PegSolitaireBoard *board) {
 }
 
 int findPegJumpedOver(int peg1, int peg2) {
-    // printf("moving peg = %d\n", peg1);
-    // printf("destination peg = %d\n", peg2);
     if ((peg1 == 1 || peg2 == 1) && (peg1 == 6 || peg2 == 6)) {
         return 3;
     }
@@ -358,42 +400,25 @@ int findPegJumpedOver(int peg1, int peg2) {
 }
 
 void movePeg(PegSolitaireBoard *board, int movingPeg, int destinationHole) {
-    //should each move make a new board and push it onto vector?
-    //DFS will pop off vector 
-
-
-    //when you move I should update the valid moves map
-    //use lines 411 to 421
-    //movingPeg will become empty and remove all instances of it from it->second
-        //if it->second is 0 then it is not a valid move because there is no peg there to move
-    //destinationHole will become 1 and can be added to valid moves
-    //pegJumpedOver will become empty and remove all instances of it from it->second
-    printf("movingPeg = %i\n", movingPeg);
-    printf("destinationHole = %i\n", destinationHole);
     setStatusBasedOnLocation(board, movingPeg, 0);
     setStatusBasedOnLocation(board, destinationHole, 1);
     int pegJumpedOver = findPegJumpedOver(movingPeg, destinationHole);
-    printf("pegJumpedOver = %i\n", pegJumpedOver);
     setStatusBasedOnLocation(board, pegJumpedOver, 0);
-
 }
 
-void updateBoard(PegSolitaireBoard *board) {
+std::vector<std::vector<int> >previousEmptyPegLocationStates;
+std::vector<std::multimap<int, int> >previousMapValidMoveStates;
+
+int updateBoard(PegSolitaireBoard *board) {
     std::map<int, std::vector<int> >::iterator findMovesForEmptyPegIterator;
     std::multimap<int, int>::iterator it;
     std::multimap<int, int>::const_iterator it2 = board->multimapOfValidMoves.begin();
     std::map<int, std::vector<int> >allMovesOnBoard; 
-    // std::vector<PegSolitaireBoard*>boardStates;
     allMovesOnBoard = getMapOfValidMoves();
 
     board->locationOfEmptyPegs.clear();
     board->multimapOfValidMoves.clear();
     board->locationOfEmptyPegs = findEmptyPegLocations(board);
-    printf("locationOfEmptyPegs = \n");
-    for (int i = 0; i < board->locationOfEmptyPegs.size(); ++i) {
-        printf("%d, ", board->locationOfEmptyPegs[i]);
-    }
-    printf("\n");
 
     for (int i = 0; i < board->locationOfEmptyPegs.size(); ++i) {
         findMovesForEmptyPegIterator = allMovesOnBoard.find(board->locationOfEmptyPegs[i]);
@@ -404,64 +429,77 @@ void updateBoard(PegSolitaireBoard *board) {
         }
     }
 
-    printf("Valid moves before deleting:\n");
-    for(it = board->multimapOfValidMoves.begin(); it != board->multimapOfValidMoves.end(); ++it) {
-        std::cout << it->first << " " << it->second << "\n";
-    }
-
     for (int j = 0; j < board->locationOfEmptyPegs.size(); ++j) {
-        for (it2 = board->multimapOfValidMoves.begin(); it2 != board->multimapOfValidMoves.end(); ++it2) {
-            int jumpedPeg = findPegJumpedOver(it2->first, it2->second);
-            if (board->locationOfEmptyPegs[j] == jumpedPeg) {
-                printf("Erasing multimapOfValidMoves because of jumpedPeg[%i]: %d, %d\n", jumpedPeg, it2->first, it2->second);
+        for (it2 = board->multimapOfValidMoves.begin(); it2 != board->multimapOfValidMoves.end(); ) {
+            if (std::find(board->locationOfEmptyPegs.begin(), board->locationOfEmptyPegs.end(), findPegJumpedOver(it2->first, it2->second)) != board->locationOfEmptyPegs.end()) {
                 board->multimapOfValidMoves.erase(it2);
                 if (board->multimapOfValidMoves.size() != 0) {
                     it2 = board->multimapOfValidMoves.begin();
                 } else {
-                    printf("No more valid moves\n");
-                    //here I should call DFS function or some function to popoff vector board state and try new move
-                    //if previous board's mapofValidMoves.size > 1 then that means there was more than one option
-                    //and you should now try option #2
-                    //or somehow keep track of which options you have tried and which ones you havent
-                    exit(1);
+                    return -1;
                 }
-            } else if (board->locationOfEmptyPegs[j] == it2->second) {
-                printf("Erasing multimapOfValidMoves: %d, %d\n", it2->first, it2->second);
+            } 
+
+            if (board->locationOfEmptyPegs[j] == it2->second) {
                 board->multimapOfValidMoves.erase(it2);
                 if (board->multimapOfValidMoves.size() != 0) {
-                    it2 = board->multimapOfValidMoves.begin();
+                        it2 = board->multimapOfValidMoves.begin();
                 } else {
-                    printf("No more valid moves\n");
-                    //here I should call DFS function or some function to popoff vector board state and try new move
-                    exit(1);
+                    return -1;
                 }
+            }
+
+            else {
+                it2++;
             }
         }
     }
 
-    printf("Valid moves:\n");
-    for(it = board->multimapOfValidMoves.begin(); it != board->multimapOfValidMoves.end(); ++it) {
-        std::cout << it->first << " " << it->second << "\n";
-    }
-
-    // boardStates.push_back(board);
-    // printf("boardStates.size() = %lu\n", boardStates.size());
-}
-void movePegToFirstOption (PegSolitaireBoard *board) {
-    std::multimap<int, int>::iterator it;
     it = board->multimapOfValidMoves.begin();
     movePeg(board, it->second, it->first);
+
+    previousEmptyPegLocationStates.push_back(board->locationOfEmptyPegs); 
+    previousMapValidMoveStates.push_back(board->multimapOfValidMoves);
+    return 0;
+}
+
+void printBoardsIfTrue(std::vector<std::vector<int> >previousEmptyPegLocationStates, std::vector<std::multimap<int, int> >previousMapValidMoveStates) {
+    PegSolitaireBoard *successBoard;
+    successBoard = new PegSolitaireBoard;
+
+    for (int i = 0; i < previousEmptyPegLocationStates.size(); ++i) {
+        delete(successBoard);
+        successBoard = new PegSolitaireBoard;
+        successBoard->locationOfEmptyPegs = previousEmptyPegLocationStates[i];
+        initializeStatusBoard(successBoard);
+        for (int j = 0; j < successBoard->locationOfEmptyPegs.size(); ++j) {
+            setNewBoardStatusEmptyPegs(successBoard, successBoard->locationOfEmptyPegs[j]);
+        }
+        printStatusBoard(successBoard);
+        printf("==================\n");
+        std::multimap<int, int>::iterator itr = previousMapValidMoveStates[i].begin();
+        printf("%i -> %i\n", itr->second, itr->first);
+    }
+
+}
+
+void printPathIfFalse(std::vector<std::multimap<int, int> >previousMapValidMoveStates) {
+    for (int i = 0; i < previousMapValidMoveStates.size(); ++i) {
+        std::multimap<int, int>::iterator itr = previousMapValidMoveStates[i].begin();
+        printf("%i -> %i\n", itr->second, itr->first);
+    }
 }
 
 int main(int argc, char**argv) {
     int emptyPegLocation = 0;
     std::string shouldPrintBoard;
-    // std::map<int, std::vector<int> >allMovesOnBoard; 
 
     if (argc != 3) {
-        printf("usage: ./a.out emptyPegLocation shouldPrintBoard\n%s\n%s",
+        printf("usage: ./a.out emptyPegLocation shouldPrintBoard\n%s\n%s\n",
                "where emptyPegLocation is between 1 and 15 (inclusive)",
-               "and shouldPrintBoard is either 'true' or 'false'\n");
+               "and shouldPrintBoard is either 'true' or 'false'");
+        printLocationBoard();
+        exit(1);
     } else {
         emptyPegLocation = atoi(argv[1]);
         shouldPrintBoard = argv[2];
@@ -470,60 +508,67 @@ int main(int argc, char**argv) {
             printf("usage: ./a.out emptyPegLocation shouldPrintBoard\n%s\n%s",
                    "where emptyPegLocation is between 1 and 15 (inclusive)",
                    "and shouldPrintBoard is either 'true' or 'false'\n");
+            printLocationBoard();
+            exit(1);
         }
+
 
         PegSolitaireBoard *board;
         board = new PegSolitaireBoard; 
 
+        PegSolitaireBoard *newBoard;
+        newBoard = new PegSolitaireBoard;
+
         initializeStatusBoard(board);
-        // allMovesOnBoard = getMapOfValidMoves();
-        //set status board according to user input of choosing empty peg
         setStatusBoard(board, emptyPegLocation);
 
-        printStatusBoard(board);
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+        do {
+            updateBoard(board);
+        } while (updateBoard(board) != -1);
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+        do {
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            delete(newBoard);
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            while (previousMapValidMoveStates[previousMapValidMoveStates.size() - 1].size() == 1 && previousMapValidMoveStates.size() > 0) {
+                previousMapValidMoveStates.pop_back();
+                previousEmptyPegLocationStates.pop_back();
+            }
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            std::multimap<int, int>::iterator it;
+            it = previousMapValidMoveStates[previousMapValidMoveStates.size() - 1].begin();
+            previousMapValidMoveStates[previousMapValidMoveStates.size() - 1].erase(it);
+            it = previousMapValidMoveStates[previousMapValidMoveStates.size() - 1].begin();
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            newBoard = new PegSolitaireBoard;
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            newBoard->multimapOfValidMoves = previousMapValidMoveStates[previousMapValidMoveStates.size() - 1];
+            newBoard->locationOfEmptyPegs = previousEmptyPegLocationStates[previousEmptyPegLocationStates.size() - 1];
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            initializeStatusBoard(newBoard);
+            for (int i = 0; i < newBoard->locationOfEmptyPegs.size(); ++i) {
+                setNewBoardStatusEmptyPegs(newBoard, newBoard->locationOfEmptyPegs[i]);
+            }
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            movePeg(newBoard, it->second, it->first);
 
-        updateBoard(board);
-        movePegToFirstOption(board);
-        printStatusBoard(board);
+            do {
+                updateBoard(newBoard);
+            } while (updateBoard(newBoard) != -1);
 
-        updateBoard(board);
-        // movePegToFirstOption(board);
-        // printStatusBoard(board);
+        } while (newBoard->locationOfEmptyPegs.size() < 14);
+
+        if (shouldPrintBoard == "true") {
+            std::multimap<int, int>::iterator it = previousMapValidMoveStates[0].begin();
+            printf("\n\nStarting empty peg: %i\n", it->first);
+            printBoardsIfTrue(previousEmptyPegLocationStates, previousMapValidMoveStates);
+            printStatusBoard(newBoard);
+            printf("==================\n");
+        } else {
+            std::multimap<int, int>::iterator it = previousMapValidMoveStates[0].begin();
+            printf("\n\nStarting empty peg: %i\n", it->first);
+            printPathIfFalse(previousMapValidMoveStates);
+        }
     }
 }
